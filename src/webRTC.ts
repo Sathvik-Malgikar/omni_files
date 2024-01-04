@@ -10,6 +10,26 @@ let markComplete;
 // (name,party)
 let cleanupAndClose;
 
+export const Init = () => {
+  pc = new RTCPeerConnection();
+  dc = pc.createDataChannel("file");
+  dc.onmessage = msgHandler;
+  dc.onopen = (e) => {
+    console.log("channel opened!");
+  };
+  dc.onclose = cleanupAndClose;
+
+  pc.ondatachannel = (dce) => {
+    dc = dce.channel;
+    dc.onmessage = msgHandler;
+    dc.onopen = (e) => {
+      console.log("channel opened!");
+    };
+    dc.onclose = cleanupAndClose;
+  };
+};
+
+
 export const setrecieveNewFile = (foo) => {
   recieveNewFile = foo;
 };
@@ -64,15 +84,12 @@ export const sendNewFile = async (file: File) => {
   chk();
 };
 
-export const peerInit = () => {
-  pc = new RTCPeerConnection();
-};
+
 
 let tempFile: Array<ArrayBuffer> = [];
 let fileName: string;
 let fileSize: Number;
 
-// TODO
 export const msgHandler = (msg) => {
   if (msg.data instanceof ArrayBuffer) {
     tempFile.push(msg.data);
@@ -101,34 +118,30 @@ export const msgHandler = (msg) => {
   }
 };
 
-export const dataChannelInit = (role: string) => {
-  dc = pc.createDataChannel("file");
-  dc.onmessage = msgHandler;
-  dc.onopen = (e) => {
-    console.log("channel opened!");
-  };
-  dc.onclose = cleanupAndClose;
-
-  pc.ondatachannel = (dce) => {
-    dc = dce.channel;
-    dc.onmessage = msgHandler;
-    dc.onopen = (e) => {
-      console.log("channel opened!");
-    };
-    dc.onclose = cleanupAndClose;
-  };
-};
-
 export const peerAcceptAnswer = async (answer) => {
   await pc.setRemoteDescription(answer);
 };
 
 // if this is called react needs to set subscription to corresponding firebase doc, and then call peerAcceptAnswer
-export const peerOffer = async () => {
+export const peerOffer = async (updateOfferSDP) => {
+  
+  
+  pc.addEventListener("icecandidate", (event) => {
+    console.log("ice candidate found");
+    
+    if (!event.candidate) {
+      console.log("SDP added to firebase");
+      console.log(JSON.stringify(pc.localDescription));
+      updateOfferSDP(pc.localDescription)
+    }
+  });
+  
+  
+  
   let offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
 
-  return pc.localDescription;
+   
 };
 
 export const peerAnswer = async (offer) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { setcleanupAndClose, setmarkComplete, setrecieveNewFile, setupdateProgress } from './webRTC';
+import { setcleanupAndClose, setmarkComplete, setrecieveNewFile, setupdateProgress } from './webRTC.ts';
 
 
 
