@@ -17,7 +17,8 @@ function Share(props) {
 
   const navigate = useNavigate();
   const receiveNewFile = (totalSize, fileName: string) => {
-    console.log("rnf");
+    // console.log("rnf");
+    // console.log(totalSize)
     setrecFiles((prev) => {
       return { ...prev, [fileName]: 0 };
     });
@@ -49,20 +50,23 @@ function Share(props) {
     fileName: string,
     party: string
   ) => {
-    console.log("up");
+    // console.log("up");
+    // console.log(incrSize)
 
     if (party == "reciever") {
       setrecFiles((prev) => {
+        // console.log("before vv")
+        // console.log(prev[fileName] + (incrSize / fileSizes[fileName]))
         return {
           ...prev,
-          fileName: prev[fileName] + incrSize / fileSizes[fileName],
+          [fileName]: prev[fileName] + (incrSize*100 / fileSizes[fileName]),
         };
       });
     } else {
       setsendFiles((prev) => {
         return {
           ...prev,
-          fileName: prev[fileName] + incrSize / fileSizes[fileName],
+          [fileName]: prev[fileName] + incrSize*100 / fileSizes[fileName],
         };
       });
     }
@@ -85,7 +89,7 @@ function Share(props) {
     let temp = eve.target.files!;
     setpickedFile(temp[0]);
   };
-  const sendHandler = () => {
+  const sendHandler = async () => {
     if (pickedFile == null) {
       alert("pick a file");
     } else {

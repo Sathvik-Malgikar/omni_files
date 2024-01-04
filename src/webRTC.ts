@@ -69,6 +69,7 @@ export const sendNewFile = async (file: File) => {
         return;
       }
       const chunk = buffer.slice(0, CHUNK_SIZE);
+      // console.log(chunk.byteLength)
       updateProgress(chunk.byteLength, file.name, "sender");
       buffer = buffer.slice(CHUNK_SIZE, buffer.byteLength);
       dc.send(chunk);
@@ -94,7 +95,7 @@ let fileSize: Number;
 
 export const msgHandler = (msg) => {
   
-  console.log("mh")
+  // console.log("mh")
   if (msg.data instanceof ArrayBuffer) {
     tempFile.push(msg.data);
     updateProgress(msg.data.byteLength, fileName, "reciever");
@@ -104,6 +105,7 @@ export const msgHandler = (msg) => {
       let payload = obj["payload"];
       fileName = payload["fileName"];
       fileSize = payload["fileSize"];
+      recieveNewFile(fileSize,fileName)
     } else {
       let a = document.createElement("a");
       a.href = window.URL.createObjectURL(
