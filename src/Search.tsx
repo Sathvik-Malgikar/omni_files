@@ -41,7 +41,7 @@ function Search() {
 
         if(!snap.exists()){
             sub()
-            navigate("/Share")
+            navigate("/Share",{state : {"partnerName" : offererName}})
 
         }
 
@@ -64,9 +64,12 @@ function Search() {
     ar.map(async (ele) => {
       let d = await ele.data();
       console.log(d["offerer"]);
-
+      if (d["offerer"] == myUsername){
+        return
+      }
       ts.add(d["offerer"]);
     });
+    
     return ts;
   };
   useEffect(() => {
@@ -94,7 +97,7 @@ function Search() {
         if (newData && newData["answerSDP"]) {
           await peerAcceptAnswer(JSON.parse(newData["answerSDP"]));
           deleteDoc(docRef)
-          navigate("/Share")
+          navigate("/Share",{state : {"partnerName" : newData["answererName"]}})
         }
       },
     });
