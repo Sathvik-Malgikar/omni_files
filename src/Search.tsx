@@ -20,9 +20,10 @@ import {
 import { firestore } from "./firebase";
 import { peerAcceptAnswer } from "./webRTC.ts";
 import { useLocation } from "react-router";
-
+import Card from "./Card.tsx"
 function Search() {
   const [recieveCandidates, setrecieveCandidates] = useState<Array<string>>([]);
+  
   const [sval, setsval] = useState("");
   const { offerer } = useLocation().state;
   const answerSubscribe = async () => {
@@ -39,33 +40,45 @@ function Search() {
       },
     });
   };
-  const search = async (eve: ChangeEvent<HTMLInputElement>) => {
-    setrecieveCandidates([]);
-    let val = eve.target.value;
-    console.log("search for " + val);
-    eve.preventDefault();
-    setsval(val);
+  const search = async () => {
+    
+      let ts:Set<string> = new Set();
 
-    let colRef = await collection(firestore, "offers");
-    let q = await query(
-      colRef,
-      where("offerer", ">=", val),
-      where("offerer", "<", val + "z"),
-      limit(5)
-    );
-    getDocs(q).then(async (qs) => {
+      console.log("search for " + sval);
+  
+      let colRef = await collection(firestore, "offers");
+      let q = await query(
+        colRef,
+        where("offerer", ">=", sval),
+        where("offerer", "<", sval + "z"),
+        limit(5)
+      );
+      let qs = await getDocs(q);
       let ar = await qs.docs;
-      ar.forEach(async (ele) => {
+      ar.map(async (ele) => {
         let d = await ele.data();
         console.log(d["offerer"]);
-
-        if (recieveCandidates.includes(d["offerer"])) {
-            return;
-        }
-        setrecieveCandidates((preVal) => [...preVal, d["offerer"]]);
+  
+        ts.add(d["offerer"])
       });
-    });
+      return ts;
+  
+
   };
+  useEffect(() => {
+    
+    let timeout = setTimeout(async ()=>{
+        let res :Set<string>= await search()
+        setrecieveCandidates(Array.from(res))
+
+    },160)
+
+    return ()=>{
+        clearTimeout(timeout)
+    }
+
+  }, [sval]);
+
   useEffect(() => {
     console.log("props recieved");
     console.log(offerer);
@@ -75,8 +88,8 @@ function Search() {
   return (
     <div>
       <p>Search peers</p>
-      <input onChange={search}></input>
-{recieveCandidates}
+      <input onChange={(eve) => setsval(eve.target.value)}></input>
+      {recieveCandidates.map(name=><Card key={name} name={name} ></Card>)}
       <a href="/Share">Share</a>
     </div>
   );
