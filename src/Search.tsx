@@ -7,6 +7,7 @@ import React, {
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -19,13 +20,15 @@ import {
 } from "firebase/firestore";
 import { firestore } from "./firebase";
 import { peerAcceptAnswer, peerAnswer } from "./webRTC.ts";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+
 import Card from "./Card.tsx";
 function Search() {
   const [recieveCandidates, setrecieveCandidates] = useState<Array<string>>([]);
 
   const [sval, setsval] = useState("");
   const { myUsername } = useLocation().state;
+  const navigate = useNavigate();
 
   const answerHandler = async (offererName: string) => {
     //  console.log(offererName)
@@ -34,6 +37,15 @@ function Search() {
     console.log(data["offerSDP"]);
     let answerSDP = await peerAnswer(data["offerSDP"]);
     updateDoc(docRef, { answerSDP: answerSDP, answererName: myUsername });
+    let sub = onSnapshot(docRef,{next : (snap)=>{
+
+        if(!snap.exists()){
+            sub()
+            navigate("/Share")
+
+        }
+
+    }})
   };
   const search = async () => {
     let ts: Set<string> = new Set();
@@ -81,6 +93,8 @@ function Search() {
         let newData = await snap.data();
         if (newData && newData["answerSDP"]) {
           await peerAcceptAnswer(JSON.parse(newData["answerSDP"]));
+          deleteDoc(docRef)
+          navigate("/Share")
         }
       },
     });
