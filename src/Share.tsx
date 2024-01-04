@@ -8,6 +8,9 @@ import {
 } from "./webRTC.ts";
 import { useLocation, useNavigate } from "react-router";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import Button from "react-bootstrap/Button";
+import { Form, Stack } from "react-bootstrap";
+import "./orbs.css";
 
 function Share(props) {
   const { partnerName } = useLocation().state;
@@ -59,14 +62,14 @@ function Share(props) {
         // console.log(prev[fileName] + (incrSize / fileSizes[fileName]))
         return {
           ...prev,
-          [fileName]: prev[fileName] + (incrSize*100 / fileSizes[fileName]),
+          [fileName]: prev[fileName] + (incrSize * 100) / fileSizes[fileName],
         };
       });
     } else {
       setsendFiles((prev) => {
         return {
           ...prev,
-          [fileName]: prev[fileName] + incrSize*100 / fileSizes[fileName],
+          [fileName]: prev[fileName] + (incrSize * 100) / fileSizes[fileName],
         };
       });
     }
@@ -110,24 +113,53 @@ function Share(props) {
   };
 
   return (
-    <div>
-      <h3>You are now connected to{partnerName}!</h3>
-      <p>Share</p>
-      <input onChange={selectHandler} type="file"></input>
-      <button onClick={sendHandler}>SEND</button>
-      <p>Recieved files:</p>
-      <div>
-        {Object.entries(recFiles).map(([a, b]) => (
-          <ProgressBar animated label={a} key={a} now={b}></ProgressBar>
-        ))}
+    <>
+      <div className="area">
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
       </div>
-      <p>Sent files:</p>
-      <div>
-        {Object.entries(sendFiles).map(([a, b]) => (
-          <ProgressBar animated label={a} key={a} now={b}></ProgressBar>
-        ))}
+      <div className="context sharealign white">
+    
+    <Stack gap={4}>
+
+<div className="d-flex justify-content-evenly" >
+        <h3>You are now connected to {partnerName}!</h3>
+<Button variant="danger" onClick={cleanupAndClose} >Leave and destroy room</Button>
+</div>
+        <Form.Control onChange={selectHandler} type="file"></Form.Control>
+        <Button onClick={sendHandler}>SEND</Button>
+        <div className="d-flex align-items-center justify-content-evenly">
+          <div className="d-flex flex-column" >  <p>Recieved files:</p>
+        
+          {Object.entries(recFiles).map(([a, b]) => (
+            <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
+          ))}
+        
+          </div>
+          <div className="d-flex flex-row"> <p>Sent files:</p>
+        
+          {Object.entries(sendFiles).map(([a, b]) => (
+            <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
+          ))}
+        
+          </div>
+        </div>
+    </Stack>
+
+      
+       
       </div>
-    </div>
+    </>
   );
 }
 

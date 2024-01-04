@@ -21,6 +21,10 @@ import {
 import { firestore } from "./firebase";
 import { peerAcceptAnswer, peerAnswer } from "./webRTC.ts";
 import { useLocation, useNavigate } from "react-router";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import Stack from "react-bootstrap/Stack";
+import "./orbs.css"
 
 import Card from "./Card.tsx";
 function Search() {
@@ -37,15 +41,14 @@ function Search() {
     console.log(data["offerSDP"]);
     let answerSDP = await peerAnswer(data["offerSDP"]);
     updateDoc(docRef, { answerSDP: answerSDP, answererName: myUsername });
-    let sub = onSnapshot(docRef,{next : (snap)=>{
-
-        if(!snap.exists()){
-            sub()
-            navigate("/Share",{state : {"partnerName" : offererName}})
-
+    let sub = onSnapshot(docRef, {
+      next: (snap) => {
+        if (!snap.exists()) {
+          sub();
+          navigate("/Share", { state: { partnerName: offererName } });
         }
-
-    }})
+      },
+    });
   };
   const search = async () => {
     let ts: Set<string> = new Set();
@@ -64,12 +67,12 @@ function Search() {
     ar.map(async (ele) => {
       let d = await ele.data();
       console.log(d["offerer"]);
-      if (d["offerer"] == myUsername){
-        return
+      if (d["offerer"] == myUsername) {
+        return;
       }
       ts.add(d["offerer"]);
     });
-    
+
     return ts;
   };
   useEffect(() => {
@@ -96,8 +99,10 @@ function Search() {
         let newData = await snap.data();
         if (newData && newData["answerSDP"]) {
           await peerAcceptAnswer(JSON.parse(newData["answerSDP"]));
-          deleteDoc(docRef)
-          navigate("/Share",{state : {"partnerName" : newData["answererName"]}})
+          deleteDoc(docRef);
+          navigate("/Share", {
+            state: { partnerName: newData["answererName"] },
+          });
         }
       },
     });
@@ -105,14 +110,50 @@ function Search() {
   }, []);
 
   return (
-    <div>
-      <p>Search peers</p>
-      <input onChange={(eve) => setsval(eve.target.value)}></input>
-      {recieveCandidates.map((name) => (
-        <Card onPress={answerHandler} key={name} name={name}></Card>
-      ))}
-      <a href="/Share">Share</a>
+    <>
+      <div className="area">
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
+      <div className="context searchalign d-flex align-items-center justify-content-center">
+
+    <div className="container-md" >
+      <Stack direction="vertical" gap={4}>
+        <Form.Control
+          value={sval}
+          onChange={(eve) => setsval(eve.target.value)}
+          className="me-auto"
+          placeholder="Search peers by username ..."
+        />
+<h3>Available peers:</h3>
+        <div>
+          {recieveCandidates.map((name) => (
+            <Card onPress={answerHandler} key={name} name={name}></Card>
+          ))}
+        </div>
+        <Button
+          onClick={() => {
+            setsval("");
+          }}
+          
+        >
+          Clear
+        </Button>
+      </Stack>
     </div>
+      </div>
+
+    </>
   );
 }
 

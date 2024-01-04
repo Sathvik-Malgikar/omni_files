@@ -8,10 +8,15 @@ import Search from "./Search.tsx";
 import Share from "./Share.tsx";
 import Header from "./Header.tsx";
 import Footer from "./Footer.tsx";
+import { Helmet } from 'react-helmet';
 
 function App() {
   return (
     <div>
+      <Helmet>
+        <title>Omni-Files</title>
+        <link rel="icon" type="image/x-icon" href={"/omni_files.ico"} />
+      </Helmet>
       <Header />
       <BrowserRouter>
         <Routes>
