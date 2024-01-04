@@ -58,6 +58,7 @@ export const sendNewFile = async (file: File) => {
     }
     })
   );
+   
   const send = () => {
     while (buffer.byteLength) {
       if (dc.bufferedAmount > dc.bufferedAmountLowThreshold) {
@@ -73,9 +74,10 @@ export const sendNewFile = async (file: File) => {
       dc.send(chunk);
     }
   };
-
-  function chk() {
+  send()
+  async function chk() {
     if (buffer.byteLength == 0) {
+      await dc.send(JSON.stringify({"header" : "EOF"}))
       markComplete(file.name, "sender");
     } else {
       setTimeout(chk, 100);
@@ -91,6 +93,8 @@ let fileName: string;
 let fileSize: Number;
 
 export const msgHandler = (msg) => {
+  
+  console.log("mh")
   if (msg.data instanceof ArrayBuffer) {
     tempFile.push(msg.data);
     updateProgress(msg.data.byteLength, fileName, "reciever");
