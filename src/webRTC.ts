@@ -144,9 +144,9 @@ export const peerOffer = async (updateOfferSDP) => {
    
 };
 
-export const peerAnswer = async (offer) => {
-  await pc.setRemoteDescription(offer);
-  let answer = await pc.createAnswer(offer);
+export const peerAnswer = async (offer : string) => {
+  await pc.setRemoteDescription(JSON.parse(offer));
+  let answer = await pc.createAnswer(JSON.parse(offer));
   await pc.setLocalDescription(answer);
-  return answer;
+  return JSON.stringify(answer);
 };

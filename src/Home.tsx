@@ -20,7 +20,7 @@ function Home(props) {
   const navigate = useNavigate();
   const [uname, setuname] = useState("");
   function validate() {
-    let cond: boolean = uname.length > 6;
+    let cond: boolean = uname.length > 3;
     if (!cond) {
       alert("Username does not qualify!");
     }
@@ -38,12 +38,20 @@ function Home(props) {
       let offer = await peerOffer(offer_SDPFirebase);
       await setDoc(docRef, {});
 
-    navigate("/Search", {"state" : {"offerer":uname}})
+    navigate("/Search", {"state" : {"myUsername":uname}})
     }
   };
+ 
+  const handleEnter : any = (ev : KeyboardEvent)=>{
+    if (ev.key == "Enter"){
+      clickHandler()
+
+    }
+  }
+  
 
   return (
-    <div>
+    <div onKeyDown={handleEnter} >
       <h2>Home</h2>
       <p>Enter username:</p>
       <input onChange={(e) => setuname(e.target.value)}></input>
