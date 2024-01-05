@@ -86,6 +86,9 @@ function Home() {
             {" "}
             <Button onClick={clickHandler}>Enter</Button>
           </div>
+          <br></br>
+          <br></br>
+          <a className="white" target="_blank" href="https://docs.google.com/uc?export=download&id=1K8i3z8zWnqr9_gkSdyEbKfCuSMF7b1uX" ><h4>Get the android app HERE!</h4></a>
         </div>
       </div>
     </>

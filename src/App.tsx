@@ -15,7 +15,6 @@ function App() {
     <div>
       <Helmet>
         <title>Omni-Files</title>
-        <link rel="icon" type="image/x-icon" href={"/omni_files.ico"} />
       </Helmet>
       <Header />
       <BrowserRouter>

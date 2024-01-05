@@ -1,3 +1,6 @@
+import { Directory } from "@capacitor/filesystem";
+import { Capacitor } from "@capacitor/core";
+import write_blob from "capacitor-blob-writer";
 const CHUNK_SIZE = 1024 * 64;
 
 let pc: RTCPeerConnection;
@@ -27,14 +30,12 @@ export const Init = () => {
     };
     dc.onclose = cleanupAndClose;
   };
-  
 };
 
-export const exitRTC=()=>{
+export const exitRTC = () => {
   dc.close();
   pc.close();
-  
-}
+};
 
 export const setrecieveNewFile = (foo) => {
   recieveNewFile = foo;
@@ -49,9 +50,6 @@ export const setcleanupAndClose = (foo) => {
   cleanupAndClose = foo;
 };
 
-
-
-
 export const sendNewFile = async (file: File) => {
   if (dc.readyState != "open") {
     console.error("dataChannel not open");
@@ -60,14 +58,14 @@ export const sendNewFile = async (file: File) => {
   let buffer = await file.arrayBuffer();
   await dc.send(
     JSON.stringify({
-    "header" : "META",
-    "payload":{
-        fileName : file.name,
-        fileSize : buffer.byteLength
-    }
+      header: "META",
+      payload: {
+        fileName: file.name,
+        fileSize: buffer.byteLength,
+      },
     })
   );
-   
+
   const send = () => {
     while (buffer.byteLength) {
       if (dc.bufferedAmount > dc.bufferedAmountLowThreshold) {
@@ -84,10 +82,10 @@ export const sendNewFile = async (file: File) => {
       dc.send(chunk);
     }
   };
-  send()
+  send();
   async function chk() {
     if (buffer.byteLength == 0) {
-      await dc.send(JSON.stringify({"header" : "EOF"}))
+      await dc.send(JSON.stringify({ header: "EOF" }));
       markComplete(file.name, "sender");
     } else {
       setTimeout(chk, 100);
@@ -96,14 +94,11 @@ export const sendNewFile = async (file: File) => {
   chk();
 };
 
-
-
 let tempFile: Array<ArrayBuffer> = [];
 let fileName: string;
 let fileSize: Number;
 
 export const msgHandler = (msg) => {
-  
   // console.log("mh")
   if (msg.data instanceof ArrayBuffer) {
     tempFile.push(msg.data);
@@ -114,21 +109,45 @@ export const msgHandler = (msg) => {
       let payload = obj["payload"];
       fileName = payload["fileName"];
       fileSize = payload["fileSize"];
-      recieveNewFile(fileSize,fileName)
+      recieveNewFile(fileSize, fileName);
     } else {
-      let a = document.createElement("a");
-      a.href = window.URL.createObjectURL(
+      console.log("EOF recieved");
+
+      if(Capacitor.getPlatform()=="web"){
+
+        let a = document.createElement("a");
+        // console.log("pakkket")
+        a.href = window.URL.createObjectURL(
         new Blob(tempFile, { type: "application/octet-stream" })
-      );
-      a.download = fileName;
-      a.click();
+        );
+        // console.log("generated URL" + a.href)
+        a.download = fileName;
+        a.click();
+      }else{
+
+        write_blob({
+          recursive: true,
+          fast_mode: true,
+          blob: new Blob(tempFile, { type: "application/octet-stream" }),
+          path: "omnifiles/" + fileName,
+          directory: Directory.Documents,
+  
+          on_fallback: (error) => {
+            console.error(error);
+          },
+        }).then(function () {
+          console.log("File written.");
+        });
+      }
+
+
+      // console.log("after a dot click");
 
       markComplete(fileName, "reciever");
-        
-      tempFile=[]
-      fileName="";
-      fileSize=-1;
 
+      tempFile = [];
+      fileName = "";
+      fileSize = -1;
     }
   }
 };
@@ -139,27 +158,21 @@ export const peerAcceptAnswer = async (answer) => {
 
 // if this is called react needs to set subscription to corresponding firebase doc, and then call peerAcceptAnswer
 export const peerOffer = async (updateOfferSDP) => {
-  
-  
   pc.addEventListener("icecandidate", (event) => {
     // console.log("ice candidate found");
-    
+
     if (!event.candidate) {
       // console.log("SDP added to firebase");
       // console.log(JSON.stringify(pc.localDescription));
-      updateOfferSDP(pc.localDescription)
+      updateOfferSDP(pc.localDescription);
     }
   });
-  
-  
-  
+
   let offer = await pc.createOffer();
   await pc.setLocalDescription(offer);
-
-   
 };
 
-export const peerAnswer = async (offer : string) => {
+export const peerAnswer = async (offer: string) => {
   await pc.setRemoteDescription(JSON.parse(offer));
   let answer = await pc.createAnswer(JSON.parse(offer));
   await pc.setLocalDescription(answer);

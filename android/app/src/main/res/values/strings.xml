@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">omnifiles</string>
+    <string name="title_activity_main">omnifiles</string>
+    <string name="package_name">io.ionic.omnifiles</string>
+    <string name="custom_url_scheme">io.ionic.omnifiles</string>
+</resources>

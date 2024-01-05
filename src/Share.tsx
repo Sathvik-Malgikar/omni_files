@@ -2,12 +2,11 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import {
   exitRTC,
   sendNewFile,
-  setcleanupAndClose,
   setmarkComplete,
   setrecieveNewFile,
   setupdateProgress,
 } from "./webRTC.ts";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation} from "react-router";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Button from "react-bootstrap/Button";
 import { Form, Stack } from "react-bootstrap";
@@ -19,7 +18,7 @@ function Share(props) {
   const [sendFiles, setsendFiles] = useState<Object>({});
   const [fileSizes, setfileSizes] = useState<Object>({});
 
-  const navigate = useNavigate();
+  
   const receiveNewFile = (totalSize, fileName: string) => {
     // console.log("rnf");
     // console.log(totalSize)
