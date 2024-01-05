@@ -88,7 +88,7 @@ function Home() {
           </div>
           <br></br>
           <br></br>
-          <a className="white"  href="https://docs.google.com/uc?export=download&id=1K8i3z8zWnqr9_gkSdyEbKfCuSMF7b1uX" ><h4>Get the android app HERE!</h4></a>
+          <a className="white"  href="https://dl.dropbox.com/scl/fi/9aj8v2gdkpme9859oyoe8/app-debug.apk?rlkey=oh1f58xv83khk366ptieu5iic&dl=0" ><h4>Get the android app HERE!</h4></a>
         </div>
       </div>
     </>
