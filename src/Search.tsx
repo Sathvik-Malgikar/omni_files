@@ -38,13 +38,14 @@ function Search() {
     //  console.log(offererName)
     const docRef = doc(firestore, "offers", offererName);
     let data = (await getDoc(docRef)).data()!;
-    console.log(data["offerSDP"]);
+    // console.log(data["offerSDP"]);
     let answerSDP = await peerAnswer(data["offerSDP"]);
     updateDoc(docRef, { answerSDP: answerSDP, answererName: myUsername });
     let sub = onSnapshot(docRef, {
       next: (snap) => {
         if (!snap.exists()) {
           sub();
+          deleteDoc(doc(firestore,"offers",myUsername))
           navigate("/Share", { state: { partnerName: offererName } });
         }
       },
@@ -53,7 +54,7 @@ function Search() {
   const search = async () => {
     let ts: Set<string> = new Set();
 
-    console.log("search for " + sval);
+    // console.log("search for " + sval);
 
     let colRef = await collection(firestore, "offers");
     let q = await query(
@@ -66,7 +67,7 @@ function Search() {
     let ar = await qs.docs;
     ar.map(async (ele) => {
       let d = await ele.data();
-      console.log(d["offerer"]);
+      // console.log(d["offerer"]);
       if (d["offerer"] == myUsername) {
         return;
       }
@@ -88,8 +89,8 @@ function Search() {
 
   useEffect(() => {
     const docRef = doc(firestore, "offers", myUsername);
-    console.log("props recieved");
-    console.log(myUsername);
+    // console.log("props recieved");
+    // console.log(myUsername);
 
     let unsubscribe = onSnapshot(docRef, {
       next: async (snap) => {

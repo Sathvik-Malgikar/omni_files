@@ -133,11 +133,11 @@ export const peerOffer = async (updateOfferSDP) => {
   
   
   pc.addEventListener("icecandidate", (event) => {
-    console.log("ice candidate found");
+    // console.log("ice candidate found");
     
     if (!event.candidate) {
-      console.log("SDP added to firebase");
-      console.log(JSON.stringify(pc.localDescription));
+      // console.log("SDP added to firebase");
+      // console.log(JSON.stringify(pc.localDescription));
       updateOfferSDP(pc.localDescription)
     }
   });

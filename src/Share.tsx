@@ -31,7 +31,7 @@ function Share(props) {
     });
   };
   const markComplete = (fileName, party) => {
-    console.log("mc");
+    // console.log("mc");
     if (party == "reciever") {
       setrecFiles((prev) => {
         return { ...prev, [fileName]: 100 };
