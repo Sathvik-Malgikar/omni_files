@@ -27,8 +27,14 @@ export const Init = () => {
     };
     dc.onclose = cleanupAndClose;
   };
+  
 };
 
+export const exitRTC=()=>{
+  dc.close();
+  pc.close();
+  
+}
 
 export const setrecieveNewFile = (foo) => {
   recieveNewFile = foo;
@@ -42,6 +48,9 @@ export const setmarkComplete = (foo) => {
 export const setcleanupAndClose = (foo) => {
   cleanupAndClose = foo;
 };
+
+
+
 
 export const sendNewFile = async (file: File) => {
   if (dc.readyState != "open") {

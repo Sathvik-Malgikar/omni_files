@@ -24,15 +24,19 @@ import { useLocation, useNavigate } from "react-router";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Stack from "react-bootstrap/Stack";
-import "./orbs.css"
+import "./orbs.css";
 
 import Card from "./Card.tsx";
 function Search() {
+
+
   const [recieveCandidates, setrecieveCandidates] = useState<Array<string>>([]);
 
   const [sval, setsval] = useState("");
   const { myUsername } = useLocation().state;
   const navigate = useNavigate();
+
+ 
 
   const answerHandler = async (offererName: string) => {
     //  console.log(offererName)
@@ -45,7 +49,7 @@ function Search() {
       next: (snap) => {
         if (!snap.exists()) {
           sub();
-          deleteDoc(doc(firestore,"offers",myUsername))
+          deleteDoc(doc(firestore, "offers", myUsername));
           navigate("/Share", { state: { partnerName: offererName } });
         }
       },
@@ -127,33 +131,30 @@ function Search() {
         </ul>
       </div>
       <div className="context searchalign d-flex align-items-center justify-content-center">
-
-    <div className="container-md" >
-      <Stack direction="vertical" gap={4}>
-        <Form.Control
-          value={sval}
-          onChange={(eve) => setsval(eve.target.value)}
-          className="me-auto"
-          placeholder="Search peers by username ..."
-        />
-<h3>Available peers:</h3>
-        <div>
-          {recieveCandidates.map((name) => (
-            <Card onPress={answerHandler} key={name} name={name}></Card>
-          ))}
+        <div className="container-md">
+          <Stack direction="vertical" gap={4}>
+            <Form.Control
+              value={sval}
+              onChange={(eve) => setsval(eve.target.value)}
+              className="me-auto"
+              placeholder="Search peers by username ..."
+            />
+            <h3>Available peers:</h3>
+            <div>
+              {recieveCandidates.map((name) => (
+                <Card onPress={answerHandler} key={name} name={name}></Card>
+              ))}
+            </div>
+            <Button
+              onClick={() => {
+                setsval("");
+              }}
+            >
+              Clear
+            </Button>
+          </Stack>
         </div>
-        <Button
-          onClick={() => {
-            setsval("");
-          }}
-          
-        >
-          Clear
-        </Button>
-      </Stack>
-    </div>
       </div>
-
     </>
   );
 }

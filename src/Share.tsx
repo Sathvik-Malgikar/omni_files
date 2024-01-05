@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import {
+  exitRTC,
   sendNewFile,
   setcleanupAndClose,
   setmarkComplete,
@@ -42,12 +43,7 @@ function Share(props) {
       });
     }
   };
-  const cleanupAndClose = () => {
-    alert("Connection lost \n Redirecting to HOME.");
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
-  };
+
   const updateProgress = (
     incrSize: number,
     fileName: string,
@@ -78,13 +74,15 @@ function Share(props) {
     setrecieveNewFile(receiveNewFile);
     setmarkComplete(markComplete);
     setupdateProgress(updateProgress);
-    setcleanupAndClose(cleanupAndClose);
+    // setcleanupAndClose(cleanupAndClose);
 
     return () => {
       setrecieveNewFile(null);
       setmarkComplete(null);
       setupdateProgress(null);
-      setcleanupAndClose(null);
+      // setcleanupAndClose(null);
+      // cleanupAndClose()
+      // exitRTC()
     };
   }, []);
   const [pickedFile, setpickedFile] = useState<File | null>(null);
@@ -134,25 +132,25 @@ function Share(props) {
 
 <div className="d-flex justify-content-evenly" >
         <h3>You are now connected to {partnerName}!</h3>
-<Button variant="danger" onClick={cleanupAndClose} >Leave and destroy room</Button>
+<Button variant="danger" onClick={exitRTC} >Leave and destroy room</Button>
 </div>
         <Form.Control onChange={selectHandler} type="file"></Form.Control>
         <Button onClick={sendHandler}>SEND</Button>
         <div className="d-flex align-items-center justify-content-evenly">
-          <div className="d-flex flex-column" >  <p>Recieved files:</p>
+          <Stack gap={4} className="d-flex flex-column" >  <p>Recieved files:</p>
         
           {Object.entries(recFiles).map(([a, b]) => (
             <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
           ))}
         
-          </div>
-          <div className="d-flex flex-row"> <p>Sent files:</p>
+          </Stack>
+          <Stack gap={4} className="d-flex flex-column"> <p>Sent files:</p>
         
           {Object.entries(sendFiles).map(([a, b]) => (
             <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
           ))}
         
-          </div>
+          </Stack>
         </div>
     </Stack>
 

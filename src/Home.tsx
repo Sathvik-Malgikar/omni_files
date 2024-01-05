@@ -2,14 +2,26 @@ import React, { useEffect, useState } from "react";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "./firebase";
 import { useNavigate } from "react-router";
-import { Init, peerOffer } from "./webRTC.ts";
+import { Init, peerOffer, setcleanupAndClose } from "./webRTC.ts";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "./orbs.css";
 
 function Home() {
+  const cleanupAndClose = () => {
+    alert("Connection lost \n Redirecting to HOME.");
+    setTimeout(() => {
+      navigate("/");
+    }, 600);
+  };
+
   useEffect(() => {
+    setcleanupAndClose(cleanupAndClose);
+
     Init();
+    return () => {
+      setcleanupAndClose(null);
+    };
   }, []);
 
   const navigate = useNavigate();
@@ -45,7 +57,7 @@ function Home() {
 
   return (
     <>
-     <div className="area">
+      <div className="area">
         <ul className="circles">
           <li></li>
           <li></li>
@@ -61,15 +73,21 @@ function Home() {
       </div>
       <div className="context" onKeyDown={handleEnter}>
         <h1>Omni-Files. P2P File sharing hassle free</h1>
-    <div  className="d-flex flex-column align-items-center"  >
-    <p className="subtext" >Enter username:</p>
-    <Form.Label column sm="4" >  <Form.Control  onChange={(e) => setuname(e.target.value)}></Form.Control></Form.Label>
-      
-       <div> <Button onClick={clickHandler}>Enter</Button></div>
-    </div>
-      </div>
+        <div className="d-flex flex-column align-items-center">
+          <p className="subtext">Enter username:</p>
+          <Form.Label column sm="4">
+            {" "}
+            <Form.Control
+              onChange={(e) => setuname(e.target.value)}
+            ></Form.Control>
+          </Form.Label>
 
-     
+          <div>
+            {" "}
+            <Button onClick={clickHandler}>Enter</Button>
+          </div>
+        </div>
+      </div>
     </>
   );
 }
