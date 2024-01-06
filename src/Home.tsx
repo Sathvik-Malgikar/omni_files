@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, setDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "./firebase";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Init, peerOffer, setcleanupAndClose } from "./webRTC.ts";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -24,6 +24,7 @@ function Home() {
     };
   }, []);
 
+
   const navigate = useNavigate();
   const [uname, setuname] = useState("");
   function validate() {
@@ -42,15 +43,17 @@ function Home() {
         });
       }
       const docRef = await doc(firestore, "offers", uname);
-      let offer = await peerOffer(offer_SDPFirebase);
+      await peerOffer(offer_SDPFirebase);
       await setDoc(docRef, {});
-
+      window.onbeforeunload = async ()=>{
+        await deleteDoc(docRef);
+      }
       navigate("/Search", { state: { myUsername: uname } });
     }
   };
 
   const handleEnter: any = (ev: KeyboardEvent) => {
-    if (ev.key == "Enter") {
+    if (ev.key === "Enter") {
       clickHandler();
     }
   };

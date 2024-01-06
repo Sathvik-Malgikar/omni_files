@@ -6,14 +6,24 @@ import {
   setrecieveNewFile,
   setupdateProgress,
 } from "./webRTC.ts";
-import { useLocation} from "react-router";
+import { useLocation, useNavigate} from "react-router";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Button from "react-bootstrap/Button";
 import { Form, Stack } from "react-bootstrap";
 import "./orbs.css";
 
-function Share(props) {
-  const { partnerName } = useLocation().state;
+function Share() {
+  const state = useLocation().state
+  const navigate = useNavigate()
+  let partnerName;
+  if(state!=null){
+    partnerName = state.partnerName;
+
+  }else{
+
+    partnerName="";
+
+  }
   const [recFiles, setrecFiles] = useState<Object>({});
   const [sendFiles, setsendFiles] = useState<Object>({});
   const [fileSizes, setfileSizes] = useState<Object>({});
@@ -70,6 +80,11 @@ function Share(props) {
     }
   };
   useEffect(() => {
+    // null state check
+    if(partnerName==""){
+      navigate("/")
+      return
+    }
     setrecieveNewFile(receiveNewFile);
     setmarkComplete(markComplete);
     setupdateProgress(updateProgress);

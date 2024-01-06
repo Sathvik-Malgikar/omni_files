@@ -33,8 +33,20 @@ function Search() {
   const [recieveCandidates, setrecieveCandidates] = useState<Array<string>>([]);
 
   const [sval, setsval] = useState("");
-  const { myUsername } = useLocation().state;
+  const state = useLocation().state;
   const navigate = useNavigate();
+  
+  let myUsername;
+
+  if (state!=null){
+
+    myUsername = state.myUsername
+  }else{
+    myUsername = "";
+    
+  }
+
+
 
  
 
@@ -92,6 +104,12 @@ function Search() {
   }, [sval]);
 
   useEffect(() => {
+    //null state check
+    if(myUsername==""){
+      navigate("/")
+      return
+    }
+
     const docRef = doc(firestore, "offers", myUsername);
     // console.log("props recieved");
     // console.log(myUsername);
