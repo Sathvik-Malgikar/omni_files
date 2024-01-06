@@ -95,7 +95,7 @@ function Home() {
           <br></br>
           <br></br>
          {Capacitor.getPlatform()=="web"
- &&  <a className="white"  href="https://dl.dropbox.com/scl/fi/9aj8v2gdkpme9859oyoe8/app-debug.apk?rlkey=oh1f58xv83khk366ptieu5iic&dl=0" ><h4>Get the android app HERE!</h4></a>
+ &&  <a className="white"  href="https://dl.dropbox.com/scl/fi/gw6fm9gyby3wtd8vzxb1o/Omni-files.apk?rlkey=wnutrbgjbxzhc6hm81a3x7byf&dl=0" ><h4>Get the android app HERE!</h4></a>
          }
         </div>
       </div>
