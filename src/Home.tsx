@@ -6,6 +6,7 @@ import { Init, peerOffer, setcleanupAndClose } from "./webRTC.ts";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import "./orbs.css";
+import { Capacitor } from "@capacitor/core";
 
 function Home() {
   const cleanupAndClose = () => {
@@ -93,7 +94,9 @@ function Home() {
           </div>
           <br></br>
           <br></br>
-          <a className="white"  href="https://dl.dropbox.com/scl/fi/9aj8v2gdkpme9859oyoe8/app-debug.apk?rlkey=oh1f58xv83khk366ptieu5iic&dl=0" ><h4>Get the android app HERE!</h4></a>
+         {Capacitor.getPlatform()=="web"
+ &&  <a className="white"  href="https://dl.dropbox.com/scl/fi/9aj8v2gdkpme9859oyoe8/app-debug.apk?rlkey=oh1f58xv83khk366ptieu5iic&dl=0" ><h4>Get the android app HERE!</h4></a>
+         }
         </div>
       </div>
     </>
