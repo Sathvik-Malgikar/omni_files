@@ -47,7 +47,9 @@ function Home() {
       await setDoc(docRef, {});
       window.onbeforeunload = async ()=>{
         await deleteDoc(docRef);
+        navigate("/")
       }
+      
       navigate("/Search", { state: { myUsername: uname } });
     }
   };
