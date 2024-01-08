@@ -12,6 +12,8 @@ let updateProgress;
 let markComplete;
 // (name,party)
 let cleanupAndClose;
+// ()
+export let channelReady=false;
 
 export const Init = () => {
   const iceConfiguration = {};
@@ -30,6 +32,7 @@ export const Init = () => {
   dc = pc.createDataChannel("file");
   dc.onmessage = msgHandler;
   dc.onopen = (e) => {
+    channelReady=true
     console.log("channel opened!");
   };
   dc.onclose = cleanupAndClose;
@@ -38,6 +41,7 @@ export const Init = () => {
     dc = dce.channel;
     dc.onmessage = msgHandler;
     dc.onopen = (e) => {
+      channelReady=true
       console.log("channel opened!");
     };
     dc.onclose = cleanupAndClose;
@@ -61,6 +65,7 @@ export const setmarkComplete = (foo) => {
 export const setcleanupAndClose = (foo) => {
   cleanupAndClose = foo;
 };
+
 
 export const sendNewFile = async (file: File) => {
   if (dc.readyState != "open") {

@@ -1,34 +1,31 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import {
+  channelReady,
   exitRTC,
   sendNewFile,
   setmarkComplete,
   setrecieveNewFile,
   setupdateProgress,
 } from "./webRTC.ts";
-import { useLocation, useNavigate} from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Button from "react-bootstrap/Button";
 import { Form, Stack } from "react-bootstrap";
 import "./orbs.css";
 
 function Share() {
-  const state = useLocation().state
-  const navigate = useNavigate()
+  const state = useLocation().state;
+  const navigate = useNavigate();
   let partnerName;
-  if(state!=null){
+  if (state != null) {
     partnerName = state.partnerName;
-
-  }else{
-
-    partnerName="";
-
+  } else {
+    partnerName = "";
   }
   const [recFiles, setrecFiles] = useState<Object>({});
   const [sendFiles, setsendFiles] = useState<Object>({});
   const [fileSizes, setfileSizes] = useState<Object>({});
 
-  
   const receiveNewFile = (totalSize, fileName: string) => {
     // console.log("rnf");
     // console.log(totalSize)
@@ -79,21 +76,36 @@ function Share() {
       });
     }
   };
+
   useEffect(() => {
     // null state check
-    if(partnerName==""){
-      navigate("/")
-      return
+    if (partnerName == "") {
+      navigate("/");
+      return;
     }
+    let tmt;
+    const checkChannel = () => {
+      if (channelReady) {
+        setfileSizes((prev) => {
+          return { channelSet: true }; //this is dummy re render
+        });
+      } else {
+        tmt = setTimeout(checkChannel, 250);
+      }
+    };
+    checkChannel();
     setrecieveNewFile(receiveNewFile);
     setmarkComplete(markComplete);
     setupdateProgress(updateProgress);
+
     // setcleanupAndClose(cleanupAndClose);
 
     return () => {
+      clearTimeout(tmt);
       setrecieveNewFile(null);
       setmarkComplete(null);
       setupdateProgress(null);
+
       // setcleanupAndClose(null);
       // cleanupAndClose()
       // exitRTC()
@@ -140,37 +152,52 @@ function Share() {
           <li></li>
         </ul>
       </div>
-      <div className="context sharealign white">
-    
-    <Stack gap={4}>
-
-<div className="d-flex justify-content-evenly" >
-        <h3>You are now connected to {partnerName}!</h3>
-<Button variant="danger" onClick={exitRTC} >Leave and destroy room</Button>
-</div>
-        <Form.Control onChange={selectHandler} type="file"></Form.Control>
-        <Button onClick={sendHandler}>SEND</Button>
-        <div className="d-flex align-items-center justify-content-evenly">
-          <Stack gap={4} className="d-flex flex-column" >  <p>Recieved files:</p>
-        
-          {Object.entries(recFiles).map(([a, b]) => (
-            <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
-          ))}
-        
-          </Stack>
-          <Stack gap={4} className="d-flex flex-column"> <p>Sent files:</p>
-        
-          {Object.entries(sendFiles).map(([a, b]) => (
-            <ProgressBar variant="success" animated label={a} key={a} now={b}></ProgressBar>
-          ))}
-        
+      {false ? (
+        <div className="context sharealign white">
+          <Stack gap={4}>
+            <div className="d-flex justify-content-evenly">
+              <h3>You are now connected to {partnerName}!</h3>
+              <Button variant="danger" onClick={exitRTC}>
+                Leave and destroy room
+              </Button>
+            </div>
+            <Form.Control onChange={selectHandler} type="file"></Form.Control>
+            <Button onClick={sendHandler}>SEND</Button>
+            <div className="d-flex align-items-center justify-content-evenly">
+              <Stack gap={4} className="d-flex flex-column">
+                {" "}
+                <p>Recieved files:</p>
+                {Object.entries(recFiles).map(([a, b]) => (
+                  <ProgressBar
+                    variant="success"
+                    animated
+                    label={a}
+                    key={a}
+                    now={b}
+                  ></ProgressBar>
+                ))}
+              </Stack>
+              <Stack gap={4} className="d-flex flex-column">
+                {" "}
+                <p>Sent files:</p>
+                {Object.entries(sendFiles).map(([a, b]) => (
+                  <ProgressBar
+                    variant="success"
+                    animated
+                    label={a}
+                    key={a}
+                    now={b}
+                  ></ProgressBar>
+                ))}
+              </Stack>
+            </div>
           </Stack>
         </div>
-    </Stack>
+      ) : (<div className="d-flex justify-content-center align-items-center context" >
 
-      
-       
+        <span className="loader"></span>
       </div>
+      )}
     </>
   );
 }
