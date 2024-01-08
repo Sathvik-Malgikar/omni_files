@@ -14,7 +14,19 @@ let markComplete;
 let cleanupAndClose;
 
 export const Init = () => {
-  pc = new RTCPeerConnection();
+  const iceConfiguration = {};
+  iceConfiguration["iceServers"] = [
+    {
+      urls: "stun:stun1.l.google.com:19302",
+    },
+    {
+      urls: "stun:stun3.l.google.com:19302",
+    },
+    {
+      urls: "stun:stun4.l.google.com:19302",
+    },
+  ];
+  pc = new RTCPeerConnection(iceConfiguration);
   dc = pc.createDataChannel("file");
   dc.onmessage = msgHandler;
   dc.onopen = (e) => {
@@ -113,25 +125,23 @@ export const msgHandler = (msg) => {
     } else {
       console.log("EOF recieved");
 
-      if(Capacitor.getPlatform()=="web"){
-
+      if (Capacitor.getPlatform() == "web") {
         let a = document.createElement("a");
         // console.log("pakkket")
         a.href = window.URL.createObjectURL(
-        new Blob(tempFile, { type: "application/octet-stream" })
+          new Blob(tempFile, { type: "application/octet-stream" })
         );
         // console.log("generated URL" + a.href)
         a.download = fileName;
         a.click();
-      }else{
-
+      } else {
         write_blob({
           recursive: true,
           fast_mode: true,
           blob: new Blob(tempFile, { type: "application/octet-stream" }),
           path: "omnifiles/" + fileName,
           directory: Directory.Documents,
-  
+
           on_fallback: (error) => {
             console.error(error);
           },
@@ -139,7 +149,6 @@ export const msgHandler = (msg) => {
           console.log("File written.");
         });
       }
-
 
       // console.log("after a dot click");
 
