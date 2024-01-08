@@ -152,7 +152,7 @@ function Share() {
           <li></li>
         </ul>
       </div>
-      {false ? (
+      {channelReady ? (
         <div className="context sharealign white">
           <Stack gap={4}>
             <div className="d-flex justify-content-evenly">
