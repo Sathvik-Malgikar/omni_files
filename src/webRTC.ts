@@ -114,7 +114,7 @@ export const msgHandler = (msg) => {
   // console.log("mh")
   // console.log(typeof msg.data)
   // console.log(msg.data instanceof ArrayBuffer)
-  if (typeof ArrayBuffer =="object") {
+  if (typeof msg.data =="object") {
     tempFile.push(msg.data);
     updateProgress(msg.data.byteLength, fileName, "reciever");
   } else {
